@@ -1,54 +1,81 @@
-let page = 1;
-const pageSize = 5;
-const newsContainer = document.getElementById('news-container');
-const loading = document.getElementById('loading');
-const apiUrl = `https://jsonplaceholder.typicode.com/posts?_limit=${pageSize}&_page=`;
+document.addEventListener("DOMContentLoaded", () => {
+  const gallery = document.getElementById('gallery');
+  const background = document.querySelector('.background');
+  const loader = document.getElementById('loader');
+  const backgroundImages = [
+    '91e08bc5ce5f297.png',
+    'sr2638a72cfe5aws3.png',
+    'https://art.pixilart.com/sr2849d344f68aws3.gif'
+  ];
+  let currentBackgroundIndex = 0;
+  let isLoading = false;
+  let imageList = [];
+  let currentScrollPosition = 0;
 
-const loadArticles = async () => {
-  loading.style.display = 'block';
-
-  try {
-    const response = await fetch(apiUrl + page);
-    if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
-
+  async function fetchImages() {
+    const response = await fetch('https://api.github.com/repos/hackclub/dinosaurs/contents');
     const data = await response.json();
+    const images = data
+      .filter(item => item.name.endsWith('.png') || item.name.endsWith('.jpg'))
+      .map(item => item.download_url);
 
-    if (data.length > 0) {
-      data.forEach(article => {
-        const articleElement = document.createElement('div');
-        articleElement.classList.add('article');
-        articleElement.innerHTML = `
-          <h2>${article.title}</h2>
-          <p>${article.body}</p>
-          <p><a href="#" target="_blank">Read more</a></p>
-        `;
-        newsContainer.appendChild(articleElement);
-      });
-    } else {
-      const noMoreArticles = document.createElement('div');
-      noMoreArticles.classList.add('article');
-      noMoreArticles.innerHTML = `<p>No more articles available.</p>`;
-      newsContainer.appendChild(noMoreArticles);
+    return images;
+  }
+
+  function displayImages(images) {
+    images.forEach(image => {
+      const imgElement = document.createElement('img');
+      imgElement.src = image;
+      gallery.appendChild(imgElement);
+    });
+  }
+
+  async function loadInitialImages() {
+    if (isLoading) return;
+    isLoading = true;
+    loader.style.display = 'block';
+    imageList = await fetchImages();
+    displayImages(imageList);
+    loader.style.display = 'none';
+    gallery.style.display = 'grid';
+    isLoading = false;
+  }
+
+  function appendImages() {
+    displayImages(imageList);
+  }
+
+  function handleScroll() {
+    if (gallery.scrollTop + gallery.clientHeight >= gallery.scrollHeight) {
+      appendImages();
+    }
+  }
+
+  function changeBackground() {
+    background.style.opacity = 0;
+    setTimeout(() => {
+      currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+      background.style.backgroundImage = `url(${backgroundImages[currentBackgroundIndex]})`;
+      background.style.opacity = 1;
+    }, 2000); 
+  }
+
+  function simulateScroll() {
+    currentScrollPosition += 2; 
+    gallery.scrollTop = currentScrollPosition;
+
+    if (gallery.scrollTop + gallery.clientHeight >= gallery.scrollHeight) {
+      appendImages();
     }
 
-    loading.style.display = 'none';
-    page += 1;
-  } catch (error) {
-    console.error('Error fetching articles:', error.message);
-    loading.style.display = 'none';
-    const errorElement = document.createElement('div');
-    errorElement.classList.add('article');
-    errorElement.innerHTML = `<p>Error fetching articles: ${error.message}</p>`;
-    newsContainer.appendChild(errorElement);
+    requestAnimationFrame(simulateScroll);
   }
-};
 
-const handleScroll = () => {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  if (scrollTop + clientHeight >= scrollHeight - 5) {
-    loadArticles();
-  }
-};
+  loadInitialImages();
+  simulateScroll();
 
-window.addEventListener('scroll', handleScroll);
-loadArticles();
+ 
+  background.style.backgroundImage = `url(${backgroundImages[currentBackgroundIndex]})`;
+  background.style.opacity = 1;
+  setInterval(changeBackground, 8000);
+});
