@@ -4,7 +4,7 @@ const newsContainer = document.getElementById('news-container');
 const loading = document.getElementById('loading');
 
 const apiKey = 'fbb23737fde64638a0cc9c652a6b255a'; 
-const apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&pageSize=${pageSize}&apiKey=${apiKey}&page=`;
+const apiUrl = `https://newsapi.org/v2/top-headlines?category=&language=en&pageSize=${pageSize}&apiKey=${apiKey}&page=`;
 
 const loadArticles = async () => {
   loading.style.display = 'block';
@@ -17,8 +17,11 @@ const loadArticles = async () => {
 
     data.articles.forEach(article => {
       const articleElement = document.createElement('div');
-      articleElement.classList.add('article');
-      articleElement.innerHTML = `<h2>${article.title}</h2><p>${article.description}</p><p><a href="${article.url}" target="_blank">Read more</a></p>`;
+      articleElent.classList.add('article');
+      articleElement.innerHTML = `
+        <h2>${article.title}</h2>
+        <p>${article.description}</p>
+        <p><a href="${article.url}" target="_blank">Read more</a></p>`;
       newsContainer.appendChild(articleElement);
     });
 
@@ -31,13 +34,13 @@ const loadArticles = async () => {
 };
 
 const handleScroll = () => {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  const { scrollTop, screight, clientHeight } = document.documentElement;
 
   if (scrollTop + clientHeight >= scrollHeight - 5) {
     loadArticles();
   }
 };
 
-window.addEventListener('scroll', handleScroll);
+window.addEventListener('scroll', handlescroll);
 
 loadArticles();
