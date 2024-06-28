@@ -7,7 +7,7 @@
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f4f4f4;
-  colr: #333;
+  color: #333;
 }
 
 header {
@@ -38,7 +38,7 @@ main {
 }
 
 .article:hover {
-: translateY(-5px);
+  transform: translateY(-5px);
 }
 
 .article h2 {
@@ -57,7 +57,16 @@ main {
   font-weight: bold;
 }
 
-.article a:hover 
+.article a:hover {
+  text-decoration: underline;
+}
+
+#loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #777;
+}
 
 footer {
   text-align: center;
