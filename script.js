@@ -1,30 +1,43 @@
 let page = 1;
-const blogContainer = document.getElementById('blog-contaier');
-const loading = doument.getElementById('loading');
+const pageSize = 5;
+const newsContainer = document.getElementById('news-container');
+const loading = document.getElementById('loading');
 
-const loadPosts = async () => {
+const apiKey = 'fbb23737fde64638a0cc9c652a6b255a'; 
+const apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&pageSize=${pageSize}&apiKey=${apiKey}&page=`;
+
+const loadArticles = async () => {
   loading.style.display = 'block';
-  const rsponse = await fetch(`https://api.hackclub.com/v1/posts?page=${page}`);
-  const data = await response.json();
 
-  data.posts.forEach(post => {
-    const postElement = document.createElement('div');
-    postElement.lassList.add('post');
-    postElement.innerHTML = `<h2>${post.title}</h2><p>${post.body}</p>`;
-    blogContainer.appendChild(postElement);
-  });
+  try {
+    const response = await fetch(apiUrl + page);
+    if (!response.ok) throw new Error('Network response was not ok');
 
-  loading.style.display = 'none';
-  page += 1;
+    const data = await response.json();
+
+    data.articles.forEach(article => {
+      const articleElement = document.createElement('div');
+      articleElement.classList.add('article');
+      articleElement.innerHTML = `<h2>${article.title}</h2><p>${article.description}</p><p><a href="${article.url}" target="_blank">Read more</a></p>`;
+      newsContainer.appendChild(articleElement);
+    });
+
+    loading.style.display = 'none';
+    page += 1;
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    loading.style.display = 'none';
+  }
 };
 
-const handleScroll = () => 
+const handleScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-  if (scrollTop + clienteight >= scrollHeight - 5) {
-    loadPosts();
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    loadArticles();
   }
 };
 
 window.addEventListener('scroll', handleScroll);
 
-loadosts();
+loadArticles();

@@ -5,13 +5,13 @@ body {
   background-color: #f4f4f4;
 }
 
-#blog-container {
+#news-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.post {
+.article {
   margin-bottom: 20px;
   padding: 15px;
   border: 1px solid #ccc;
