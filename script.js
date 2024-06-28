@@ -74,8 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loadInitialImages();
   simulateScroll();
 
- 
+  
   background.style.backgroundImage = `url(${backgroundImages[currentBackgroundIndex]})`;
   background.style.opacity = 1;
   setInterval(changeBackground, 8000);
 });
+
